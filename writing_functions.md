@@ -27,11 +27,12 @@ z_score = function(x) {
 z_score(x_vec)
 ```
 
-    ##  [1]  0.70312968 -0.68345423 -1.05769118  1.00236038  0.05677682 -1.32363894
-    ##  [7]  1.28445080 -0.59616768  0.21241468 -1.09165237  2.84150419 -0.43234347
-    ## [13]  0.29812259 -1.95684238  0.46021709 -0.26507029 -0.44467608 -0.57172703
-    ## [19]  0.33590268  1.15461636 -0.35152596 -0.40409637  1.28977153 -0.21581527
-    ## [25]  0.05591396 -1.11915615 -0.37104779  1.71262620 -0.37520770 -0.14769410
+    ##  [1] -1.092769149  1.037854182 -0.478191636 -0.006690733  0.208863992
+    ##  [6] -0.183348270 -0.467117098  1.445960858  0.302530834 -1.006962031
+    ## [11]  0.969164649 -0.672473080 -0.081916138  1.640519655  1.595385368
+    ## [16] -2.638117894  0.910654489  0.606570045  0.498116864  0.039853490
+    ## [21]  1.299010971 -0.221491083  0.557351511 -0.536604753 -1.185943260
+    ## [26]  0.208159524 -0.554119616 -0.209719689 -1.957102831 -0.027429172
 
 Try my function on some other things. These should give errors.
 
@@ -89,7 +90,7 @@ mean_and_sd(x_vec)
     ## # A tibble: 1 × 2
     ##    mean    sd
     ##   <dbl> <dbl>
-    ## 1  5.81  2.60
+    ## 1  4.56  2.73
 
 ## Multiple inputs
 
@@ -114,13 +115,101 @@ sim_mean_sd(sample_size = 100, mu = 4, sigma = 3)
     ## # A tibble: 1 × 2
     ##    mean    sd
     ##   <dbl> <dbl>
-    ## 1  4.35  2.77
+    ## 1  3.65  3.03
 
 ``` r
 sim_mean_sd(100)
 ```
 
     ## # A tibble: 1 × 2
-    ##    mean    sd
-    ##   <dbl> <dbl>
-    ## 1 0.144 0.956
+    ##     mean    sd
+    ##    <dbl> <dbl>
+    ## 1 -0.123  1.04
+
+## Let’s review Napoleon Dynamite
+
+``` r
+url = "https://www.amazon.com/product-reviews/B00005JNBQ/ref=cm_cr_arp_d_viewopt_rvwer?ie=UTF8&reviewerType=avp_only_reviews&sortBy=recent&pageNumber=1"
+
+dynamite_html = read_html(url)
+
+review_titles = 
+  dynamite_html %>%
+  html_nodes(".a-text-bold span") %>%
+  html_text()
+
+review_stars = 
+  dynamite_html %>%
+  html_nodes("#cm_cr-review_list .review-rating") %>%
+  html_text() %>%
+  str_extract("^\\d") %>%
+  as.numeric()
+
+review_text = 
+  dynamite_html %>%
+  html_nodes(".review-text-content span") %>%
+  html_text() %>% 
+  str_replace_all("\n", "") %>% 
+  str_trim()
+
+reviews = tibble(
+  title = review_titles,
+  stars = review_stars,
+  text = review_text
+)
+```
+
+What about the next page to review ….
+
+Let’s turn that code into a function.
+
+``` r
+read_page_reviews = function(url) {
+  
+  html = read_html(url)
+
+  review_titles = 
+    html %>%
+    html_nodes(".a-text-bold span") %>%
+    html_text()
+  
+  review_stars = 
+    html %>%
+    html_nodes("#cm_cr-review_list .review-rating") %>%
+    html_text() %>%
+    str_extract("^\\d") %>%
+    as.numeric()
+  
+  review_text = 
+    html %>%
+    html_nodes(".review-text-content span") %>%
+    html_text() %>% 
+    str_replace_all("\n", "") %>% 
+    str_trim()
+  
+  reviews = tibble(
+    title = review_titles,
+    stars = review_stars,
+    text = review_text
+  )
+
+  reviews
+  
+}
+```
+
+let try the function.
+
+``` r
+dynamite_url_base = "https://www.amazon.com/product-reviews/B00005JNBQ/ref=cm_cr_arp_d_viewopt_rvwer?ie=UTF8&reviewerType=avp_only_reviews&sortBy=recent&pageNumber="
+
+dynamite_urls = str_c(dynamite_url_base, 1:5)
+
+all_reviews = 
+  bind_rows(
+    read_page_reviews(dynamite_urls[1]),
+    read_page_reviews(dynamite_urls[2]),
+    read_page_reviews(dynamite_urls[4]),
+    read_page_reviews(dynamite_urls[5])
+  )
+```
