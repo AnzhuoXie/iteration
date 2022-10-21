@@ -6,9 +6,6 @@ output: github_document
 ```{r set up, include = FALSE}  
 library(tidyverse)
 
-library(rvest)
-library(httr)
-
 knitr::opts_chunk$set(
   fig.width = 6,
   fig.asp = .6,
@@ -59,5 +56,59 @@ z_score(3)
 z_score("My name is Anderson")
 z_score(mtcars)
 z_score(c(TRUE, TRUE, FALSE, TRUE))
+```
+
+## Multiple outputs
+
+```{r}
+mean_and_sd = function(x) {
+  
+  if(!is.numeric(x)) {
+    stop('Input must be numeric')
+  }
+  
+  if(length(x) < 3) {
+    stop("Input must have at least three numbers")
+  }
+  
+tibble(
+  mean = mean(x),
+  sd = sd(x)
+)
+  
+}
+```
+
+Check the function works
+
+```{r}
+mean_and_sd(x_vec)
+```
+
+## Multiple inputs
+
+```{r}
+sim_mean_sd = function(sample_size, mu = 0, sigma = 1) {  #mu=0, sigma=1 is the default value, it will be overwritten if you input the value you want
+  
+  sim_data = 
+    tibble(
+      x = rnorm(n = sample_size, mean = mu, sd = sigma)
+    )
+  
+  sim_data %>% 
+    summarize(
+      mean = mean(x),
+      sd = sd(x)
+    )
+}
+
+sim_mean_sd(sample_size = 100, mu = 4, sigma = 3)
+sim_mean_sd(100)
+```
+
+
+
+```{r}
+
 ```
 

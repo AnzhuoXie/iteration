@@ -27,11 +27,11 @@ z_score = function(x) {
 z_score(x_vec)
 ```
 
-    ##  [1]  0.13422737 -0.68796681  1.12672469  0.24557991  1.86106185  0.12929645
-    ##  [7]  1.28275502 -2.02258829  0.14631203  0.37349758 -1.43731256 -0.40563443
-    ## [13]  0.49014285 -1.50925699 -0.01811023 -0.28326572  0.49922328  1.20303730
-    ## [19]  0.43445182 -1.10540006 -0.07996241 -0.71737306  1.12426995  1.26356258
-    ## [25]  0.06242370 -0.79857799 -0.34382784 -1.07840309 -1.45350880  1.56462191
+    ##  [1]  0.70312968 -0.68345423 -1.05769118  1.00236038  0.05677682 -1.32363894
+    ##  [7]  1.28445080 -0.59616768  0.21241468 -1.09165237  2.84150419 -0.43234347
+    ## [13]  0.29812259 -1.95684238  0.46021709 -0.26507029 -0.44467608 -0.57172703
+    ## [19]  0.33590268  1.15461636 -0.35152596 -0.40409637  1.28977153 -0.21581527
+    ## [25]  0.05591396 -1.11915615 -0.37104779  1.71262620 -0.37520770 -0.14769410
 
 Try my function on some other things. These should give errors.
 
@@ -58,3 +58,69 @@ z_score(c(TRUE, TRUE, FALSE, TRUE))
 ```
 
     ## Error in z_score(c(TRUE, TRUE, FALSE, TRUE)): Input must be numeric
+
+## Multiple outputs
+
+``` r
+mean_and_sd = function(x) {
+  
+  if(!is.numeric(x)) {
+    stop('Input must be numeric')
+  }
+  
+  if(length(x) < 3) {
+    stop("Input must have at least three numbers")
+  }
+  
+tibble(
+  mean = mean(x),
+  sd = sd(x)
+)
+  
+}
+```
+
+Check the function works
+
+``` r
+mean_and_sd(x_vec)
+```
+
+    ## # A tibble: 1 × 2
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1  5.81  2.60
+
+## Multiple inputs
+
+``` r
+sim_mean_sd = function(sample_size, mu = 0, sigma = 1) {  #mu=0, sigma=1 is the default value, it will be overwritten if you input the value you want
+  
+  sim_data = 
+    tibble(
+      x = rnorm(n = sample_size, mean = mu, sd = sigma)
+    )
+  
+  sim_data %>% 
+    summarize(
+      mean = mean(x),
+      sd = sd(x)
+    )
+}
+
+sim_mean_sd(sample_size = 100, mu = 4, sigma = 3)
+```
+
+    ## # A tibble: 1 × 2
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1  4.35  2.77
+
+``` r
+sim_mean_sd(100)
+```
+
+    ## # A tibble: 1 × 2
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1 0.144 0.956
