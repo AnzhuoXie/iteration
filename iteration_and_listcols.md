@@ -30,8 +30,8 @@ l
     ## [2,]    2    4    6    8
     ## 
     ## $summary
-    ##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
-    ## -1.8783385 -0.6710497 -0.1002376 -0.0003551  0.5792616  2.7738401
+    ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+    ## -2.72073 -0.83552 -0.07427 -0.11289  0.53194  2.31348
 
 ``` r
 l$vec_numeric
@@ -107,16 +107,16 @@ mean_and_sd(list_norm[[1]])
     ## # A tibble: 1 × 2
     ##    mean    sd
     ##   <dbl> <dbl>
-    ## 1  3.31 0.944
+    ## 1  3.52  1.03
 
 ``` r
 mean_and_sd(list_norm[[2]])
 ```
 
     ## # A tibble: 1 × 2
-    ##     mean    sd
-    ##    <dbl> <dbl>
-    ## 1 -0.335  5.43
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1 0.995  5.21
 
 ``` r
 mean_and_sd(list_norm[[3]])
@@ -125,7 +125,7 @@ mean_and_sd(list_norm[[3]])
     ## # A tibble: 1 × 2
     ##    mean    sd
     ##   <dbl> <dbl>
-    ## 1  10.1 0.151
+    ## 1  10.0 0.211
 
 ``` r
 mean_and_sd(list_norm[[4]])
@@ -134,7 +134,7 @@ mean_and_sd(list_norm[[4]])
     ## # A tibble: 1 × 2
     ##    mean    sd
     ##   <dbl> <dbl>
-    ## 1 -3.27 0.912
+    ## 1 -3.11 0.934
 
 Let’s use a for loop:
 
@@ -146,4 +146,11 @@ for (i in 1:4){
   output[[i]] = mean_and_sd(list_norm[[i]])
   
 }
+```
+
+## Let’s try map!
+
+``` r
+output1 = map(list_norm, mean_and_sd)
+output2 = map(list_norm, median)
 ```
