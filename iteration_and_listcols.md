@@ -31,7 +31,7 @@ l
     ## 
     ## $summary
     ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
-    ## -2.72073 -0.83552 -0.07427 -0.11289  0.53194  2.31348
+    ## -3.39491 -0.56825  0.04661  0.02931  0.68954  2.07088
 
 ``` r
 l$vec_numeric
@@ -107,7 +107,7 @@ mean_and_sd(list_norm[[1]])
     ## # A tibble: 1 × 2
     ##    mean    sd
     ##   <dbl> <dbl>
-    ## 1  3.52  1.03
+    ## 1  3.05  1.05
 
 ``` r
 mean_and_sd(list_norm[[2]])
@@ -116,7 +116,7 @@ mean_and_sd(list_norm[[2]])
     ## # A tibble: 1 × 2
     ##    mean    sd
     ##   <dbl> <dbl>
-    ## 1 0.995  5.21
+    ## 1 0.559  3.67
 
 ``` r
 mean_and_sd(list_norm[[3]])
@@ -125,7 +125,7 @@ mean_and_sd(list_norm[[3]])
     ## # A tibble: 1 × 2
     ##    mean    sd
     ##   <dbl> <dbl>
-    ## 1  10.0 0.211
+    ## 1  9.99 0.186
 
 ``` r
 mean_and_sd(list_norm[[4]])
@@ -134,7 +134,7 @@ mean_and_sd(list_norm[[4]])
     ## # A tibble: 1 × 2
     ##    mean    sd
     ##   <dbl> <dbl>
-    ## 1 -3.11 0.934
+    ## 1 -2.92 0.859
 
 Let’s use a for loop:
 
@@ -151,6 +151,14 @@ for (i in 1:4){
 ## Let’s try map!
 
 ``` r
-output1 = map(list_norm, mean_and_sd)
-output2 = map(list_norm, median)
+output = map(list_norm, mean_and_sd)
+output = map(list_norm, median)
+```
+
+``` r
+output = map_dbl(list_norm, median)  ## spit out a different type rather than list, but dbl can only be used in the single value
+```
+
+``` r
+output = map_df(list_norm, mean_and_sd, .id = "input") # this .id = "input" makes the id can also be spited out
 ```
