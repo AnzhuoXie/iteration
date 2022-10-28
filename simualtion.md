@@ -28,9 +28,9 @@ sim_mean_sd(300)
 ```
 
     ## # A tibble: 1 × 2
-    ##      mean    sd
-    ##     <dbl> <dbl>
-    ## 1 -0.0321 0.975
+    ##     mean    sd
+    ##    <dbl> <dbl>
+    ## 1 0.0336 0.964
 
 ## Let’s simulate a lot.
 
@@ -49,18 +49,18 @@ bind_rows(output)
 ```
 
     ## # A tibble: 10 × 2
-    ##       mean    sd
-    ##      <dbl> <dbl>
-    ##  1  0.0365 1.01 
-    ##  2  0.0309 0.952
-    ##  3  0.0666 1.10 
-    ##  4 -0.131  0.997
-    ##  5  0.148  1.02 
-    ##  6  0.0334 0.778
-    ##  7 -0.0407 0.990
-    ##  8  0.103  0.999
-    ##  9 -0.0882 0.992
-    ## 10  0.0561 1.02
+    ##         mean    sd
+    ##        <dbl> <dbl>
+    ##  1  0.0516   0.992
+    ##  2 -0.0391   1.17 
+    ##  3 -0.0445   0.966
+    ##  4 -0.200    1.08 
+    ##  5  0.000255 1.10 
+    ##  6  0.0101   1.09 
+    ##  7  0.00407  1.05 
+    ##  8 -0.0103   1.03 
+    ##  9 -0.152    0.986
+    ## 10  0.243    1.08
 
 Let’s use a loop function.
 
@@ -90,7 +90,7 @@ sim_results %>%
     ## # A tibble: 1 × 2
     ##   avg_samp_mean sd_samp_mean
     ##           <dbl>        <dbl>
-    ## 1        0.0329        0.182
+    ## 1      -0.00102        0.177
 
 ``` r
 sim_results %>% 
@@ -98,3 +98,53 @@ sim_results %>%
 ```
 
 <img src="simualtion_files/figure-gfm/unnamed-chunk-5-2.png" width="90%" />
+
+## rerun
+
+``` r
+n_list = 
+  list(
+    "n = 30" = 30,
+    "n = 60" = 60,
+    "n = 120" = 120,
+    "n = 240" = 240
+  )
+
+output = vector('list', 4)
+
+output[[1]] = rerun(100, sim_mean_sd(sample_size = n_list[[1]])) %>%  bind_rows
+
+for (i in 1:4) {
+  
+  output[[i]] = 
+    rerun(100, sim_mean_sd(sample_size = n_list[[1]])) %>% 
+    bind_rows()
+}
+```
+
+``` r
+sim_results =
+  tibble(
+    sample_size = c(30, 60, 120, 240)
+  ) %>% 
+    mutate(
+      output_lists = map(.x = sample_size, ~ rerun(10, sim_mean_sd(.x))),
+      estimate_df = map(output_lists, bind_rows)
+    ) %>% 
+    select(-output_lists) %>% 
+    unnest(estimate_df)
+```
+
+Let’s do some data frame things.
+
+``` r
+sim_results %>% 
+  mutate(
+    sample_size = str_c('n = ', sample_size),
+    sample_size = fct_inorder(sample_size)
+  ) %>% 
+  ggplot(aes(x = sample_size, y = mean)) +
+  geom_boxplot()
+```
+
+<img src="simualtion_files/figure-gfm/unnamed-chunk-8-1.png" width="90%" />
